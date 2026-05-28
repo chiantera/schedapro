@@ -56,12 +56,12 @@ export function ChatDrawer({
   };
 
   const QUICK_ACTIONS = [
-    { key: 'strategy',    label: 'Strategia del caso',    icon: Sparkles },
-    { key: 'memoria',     label: 'Memoria difensiva',     icon: FileText },
-    { key: 'cassazione',  label: 'Ricorso Cassazione',    icon: Scale },
-    { key: 'eccezione',   label: 'Eccezione procedurale', icon: ShieldAlert },
-    { key: 'crossExam',   label: 'Controesame testimoni', icon: Users },
-    { key: 'clienteNote', label: 'Nota per il cliente',   icon: MessageSquare },
+    { key: 'strategy',             label: 'Analisi progressi',    icon: Sparkles },
+    { key: 'pianoSettimana',       label: 'Piano settimana',       icon: FileText },
+    { key: 'schedaMensile',        label: 'Scheda mensile',        icon: Scale },
+    { key: 'reportProgresso',      label: 'Report progresso',      icon: ShieldAlert },
+    { key: 'notaNutrizionale',     label: 'Nota nutrizionale',     icon: Users },
+    { key: 'messaggioMotivazione', label: 'Messaggio cliente',     icon: MessageSquare },
   ] as const;
 
   const isEmpty = state.messages.length === 0;
@@ -73,8 +73,8 @@ export function ChatDrawer({
           <div className="chat-header-title">
             <div className="chat-header-icon"><Sparkles size={16} /></div>
             <div>
-              <div className="chat-header-name">GiulIA</div>
-              {state.caseContext && <div className="chat-header-sub">Conosce il fascicolo</div>}
+              <div className="chat-header-name">Aria</div>
+              {state.caseContext && <div className="chat-header-sub">Conosce la scheda</div>}
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -101,10 +101,10 @@ export function ChatDrawer({
           {isEmpty && (
             <div className="chat-empty">
               <div className="chat-empty-icon"><Sparkles size={32} /></div>
-              <h3>GiulIA</h3>
+              <h3>Aria</h3>
               {state.caseContext
-                ? <p>Buongiorno, Collega. Ho letto il fascicolo. Posso redigere memorie, ricorsi, eccezioni, prepararti al controesame — o semplicemente ragionare insieme sulla strategia. Come posso aiutarti?</p>
-                : <p>Buongiorno, Collega. Sono GiulIA, avvocata penalista. Conosco il Codice Penale, il c.p.p. e la giurisprudenza della Cassazione. Apri un fascicolo per lavorare su un caso specifico.</p>
+                ? <p>Ciao! Ho letto la scheda. Posso generare un piano di allenamento, analizzare i progressi, preparare un report o scrivere un messaggio per il cliente. Come posso aiutarti?</p>
+                : <p>Ciao! Sono Aria, il tuo coach AI. Apri la scheda di un cliente per lavorare sui progressi, generare piani e analizzare le sessioni.</p>
               }
             </div>
           )}
@@ -128,7 +128,7 @@ export function ChatDrawer({
             ref={inputRef}
             className="chat-input"
             rows={1}
-            placeholder={state.caseContext ? 'Chiedi qualcosa sul fascicolo, o richiedi un atto…' : 'Domanda di diritto penale italiano…'}
+            placeholder={state.caseContext ? 'Chiedi qualcosa sulla scheda, o genera un piano…' : 'Domanda su allenamento, progressi, nutrizione…'}
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKey}
@@ -242,12 +242,12 @@ export function FloatingChatButton({
         onPointerUp={onUp}
         onPointerCancel={onCancel}
         onContextMenu={e => { e.preventDefault(); setCtxMenu({ x: e.clientX, y: e.clientY }); }}
-        aria-label="Apri GiulIA"
-        title="Apri GiulIA"
+        aria-label="Apri Aria"
+        title="Apri Aria"
         style={style}
       >
         <MessageSquare size={26} />
-        <span className="chat-fab-label">GiulIA</span>
+        <span className="chat-fab-label">Aria</span>
         {hasContext && <span className="chat-fab-dot" />}
       </button>
       {ctxMenu && (
@@ -263,9 +263,9 @@ export function FloatingChatButton({
 
 export function FabRestoreButton({ onRestore }: { onRestore: () => void }) {
   return (
-    <button className="fab-restore" onClick={onRestore} aria-label="Mostra GiulIA">
+    <button className="fab-restore" onClick={onRestore} aria-label="Mostra Aria">
       <MessageSquare size={14} />
-      <span>GiulIA</span>
+      <span>Aria</span>
     </button>
   );
 }

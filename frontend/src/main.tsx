@@ -381,7 +381,7 @@ function CaseListView({ onSelect, session, onOpenChat }: { onSelect: (id: string
         setWarming(false);
       } catch {
         setWarming(false);
-        if (localSummaries.length === 0) setError('Backend non raggiungibile e nessun fascicolo locale');
+        if (localSummaries.length === 0) setError('Backend non raggiungibile e nessuna scheda locale');
       }
     })();
   }, [localOwnerId]);
@@ -396,7 +396,7 @@ function CaseListView({ onSelect, session, onOpenChat }: { onSelect: (id: string
     try {
       await dbSave(localOwnerId, newCase);
     } catch (e) {
-      setError(`Errore creazione fascicolo: ${(e as Error).message}`);
+      setError(`Errore creazione scheda: ${(e as Error).message}`);
       return;
     }
     setShowUpload(false);
@@ -475,7 +475,7 @@ function CaseListView({ onSelect, session, onOpenChat }: { onSelect: (id: string
               const parsed = await parsePltFile<CaseAnalysis>(text);
               let data: CaseAnalysis;
               if (parsed.kind === 'encrypted') {
-                const password = prompt("Fascicolo protetto\n\nQuesto file .plt è cifrato. Inserisci la password usata al momento dell'esportazione.");
+                const password = prompt("Scheda protetta\n\nQuesto file .spr è cifrato. Inserisci la password usata al momento dell'esportazione.");
                 if (!password) throw new Error('Importazione annullata');
                 data = await decryptPltContainer<CaseAnalysis>(parsed.container, password);
               } else {
@@ -557,7 +557,7 @@ function CaseListView({ onSelect, session, onOpenChat }: { onSelect: (id: string
                   <span className="case-local-badge">locale</span>
                 )}
                 {localIds.has(c.case_id) && (
-                  <button className="case-delete-btn" onClick={e => handleDelete(c.case_id, e)} title="Elimina fascicolo" type="button">
+                  <button className="case-delete-btn" onClick={e => handleDelete(c.case_id, e)} title="Elimina scheda" type="button">
                     <Trash2 size={14} />
                   </button>
                 )}

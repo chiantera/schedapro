@@ -1174,12 +1174,12 @@ function RedactionDrawer({
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
             <button className="ghost-button" style={{ fontSize: '0.8rem', padding: '8px 12px' }} onClick={() => addRule('global')} title="Aggiungi regola a tutti i fascicoli" disabled={!origInput.trim()}>+ Globale</button>
-            <button className="ghost-button" style={{ fontSize: '0.8rem', padding: '8px 12px' }} onClick={() => addRule('case')} title="Aggiungi regola solo a questo fascicolo" disabled={!origInput.trim()}>+ Solo questo caso</button>
+            <button className="ghost-button" style={{ fontSize: '0.8rem', padding: '8px 12px' }} onClick={() => addRule('case')} title="Aggiungi regola solo a questa scheda" disabled={!origInput.trim()}>+ Solo questo caso</button>
           </div>
         </div>
 
         <RuleList rules={globalRules} onChange={setGlobalRules} title="Regole globali (tutti i fascicoli)" />
-        <RuleList rules={caseRules} onChange={setCaseRules} title="Regole per questo fascicolo" />
+        <RuleList rules={caseRules} onChange={setCaseRules} title="Regole per questa scheda" />
 
         <div className="redact-section">
           <p className="eyebrow">Rilevamento AI</p>
@@ -1263,7 +1263,7 @@ function ExportCaseDrawer({
   const submit = async () => {
     setError(null);
     if (mode === 'protected') {
-      if (!password.trim()) { setError('Inserisci una password per proteggere il fascicolo.'); return; }
+      if (!password.trim()) { setError('Inserisci una password per proteggere la scheda.'); return; }
       if (password !== confirmPassword) { setError('Le password non coincidono.'); return; }
     } else if (!confirm('Confermi di voler esportare un file non protetto?\nIl contenuto sarà leggibile da chiunque abbia accesso al file.')) {
       return;
@@ -1811,8 +1811,8 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
         : exportPlainPlt(exportData);
       downloadPlt(container, `${caseData.case_id}.plt`);
       showToast(protectedFile
-        ? 'Fascicolo protetto esportato'
-        : (anonymized ? 'Copia anonimizzata esportata senza password' : 'Fascicolo non protetto esportato'));
+        ? 'Scheda protetta esportata'
+        : (anonymized ? 'Copia anonimizzata esportata senza password' : 'Scheda non protetta esportata'));
     } catch (e) {
       showToast(`Esportazione fallita: ${(e as Error).message}`, 'error');
     }
@@ -1876,7 +1876,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
       title: title || draftTypeLabel(type),
       prompt,
       anonymized: redactionActive && hasActiveRules,
-      contentMarkdown: 'Generazione bozza in corso…\n\nLa workspace è già salvata nel fascicolo locale.',
+      contentMarkdown: 'Generazione bozza in corso…\n\nLa workspace è già salvata nella scheda locale.',
     });
     const createdCase = addDraftArtifact(caseData, placeholder);
     await dbSave(localOwnerId, createdCase);
@@ -2019,7 +2019,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
       onCaseLoaded(updated);
       onCaseAnalyzed?.(updated);
       if (updated.pro_recommendation?.recommended) {
-        showToast('Analisi standard completata. GiulIA suggerisce un Approfondimento Pro: nessun addebito senza conferma.', 'info');
+        showToast('Analisi standard completata. Aria suggerisce un Approfondimento Pro: nessun addebito senza conferma.', 'info');
       }
     } catch (e) {
       showToast(`Errore analisi: ${(e as Error).message}`, 'error');
@@ -2123,7 +2123,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
       {/* Hero */}
       <section className="hero-card">
         <div className="hero-topline">
-          <span><Gavel size={14} /> Pocket Legal Triage</span>
+          <span><Gavel size={14} /> SchedaPRO</span>
           <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap' }}>
             {la && (
               <div className="risk-pill" style={{ background: riskColor(la.risk_level) + '22', border: `1px solid ${riskColor(la.risk_level)}55`, color: riskColor(la.risk_level) }}>
@@ -2274,7 +2274,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
                 );
               }}
             >
-              <MessageSquare size={12} /> Prepara con GiulIA
+              <MessageSquare size={12} /> Prepara con Aria
             </button>
           </div>
           <ShieldCheck className="deadline-icon" />
@@ -2636,8 +2636,8 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
               </p>
               <SourceRow refs={q.source_refs} onSelect={setSelectedSource} />
               {q.question && (
-                <button className="giulia-ctx-btn" title="Chiedi a GiulIA di analizzare questo elemento in dettaglio" onClick={() => onOpenChat(`Come indago questa questione: "${q.question}"? Perché conta: ${q.why_it_matters}. Suggerisci le mosse concrete per rispondere a questa domanda difensiva.`)}>
-                  <MessageSquare size={12} /> Chiedi a GiulIA
+                <button className="giulia-ctx-btn" title="Chiedi a Aria di analizzare questo elemento in dettaglio" onClick={() => onOpenChat(`Come lavoriamo su questa domanda: "${q.question}"? Perché conta: ${q.why_it_matters}. Suggerisci le azioni concrete per rispondere a questa priorità.`)}>
+                  <MessageSquare size={12} /> Chiedi a Aria
                 </button>
               )}
             </article>
@@ -2711,8 +2711,8 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
               </p>
               <SourceRow refs={ct.source_refs} onSelect={setSelectedSource} />
               {ct.title && (
-                <button className="giulia-ctx-btn" title="Chiedi a GiulIA di analizzare questo elemento in dettaglio" onClick={() => onOpenChat(`Come possiamo sfruttare in udienza la contraddizione "${ct.title}"? ${ct.description} Suggerisci come usarla nella strategia difensiva e quali domande fare ai testimoni.`)}>
-                  <MessageSquare size={12} /> Chiedi a GiulIA
+                <button className="giulia-ctx-btn" title="Chiedi a Aria di analizzare questo elemento in dettaglio" onClick={() => onOpenChat(`Come gestiamo questa incongruenza con il cliente: "${ct.title}"? ${ct.description} Suggerisci come affrontarla nel piano di allenamento e come comunicarla.`)}>
+                  <MessageSquare size={12} /> Chiedi a Aria
                 </button>
               )}
             </article>

@@ -125,7 +125,7 @@ export default function MultiFileUploadDrawer({
         <div className="drawer-header">
           <div>
             <p className="eyebrow">Elaborazione locale</p>
-            <h2>Aggiungi al fascicolo</h2>
+            <h2>Aggiungi alla scheda</h2>
           </div>
           <button title="Chiudi" onClick={onClose} className="ghost-button"><X size={18} /></button>
         </div>
@@ -135,7 +135,7 @@ export default function MultiFileUploadDrawer({
             <FileText size={14} /> Documenti
           </button>
           <button className={`upload-tab${isGiur ? ' active giur' : ''}`} onClick={() => setActiveTab('giurisprudenza')}>
-            <Scale size={14} /> Giurisprudenza
+            <Scale size={14} /> Documentazione medica
           </button>
         </div>
 
@@ -190,8 +190,8 @@ export default function MultiFileUploadDrawer({
           <div className="drop-zone-icon-container">
             {isGiur ? <Scale size={28} /> : <Upload size={32} />}
           </div>
-          <p>{isGiur ? 'Trascina la sentenza o il provvedimento' : 'Trascina i file qui o tocca per selezionarli'}</p>
-          <small>{isGiur ? "PDF, TXT — il precedente sarà etichettato come verificato dall'avvocato" : 'PDF, DOCX, TXT, immagini — più file alla volta'}</small>
+          <p>{isGiur ? 'Trascina referti, esami o documentazione medica' : 'Trascina i file qui o tocca per selezionarli'}</p>
+          <small>{isGiur ? 'PDF, TXT — il documento sarà etichettato come documentazione medica/specialistica' : 'PDF, DOCX, TXT, immagini — più file alla volta'}</small>
           <input ref={fileRef} type="file" style={{ display: 'none' }} multiple accept=".pdf,.docx,.pptx,.xlsx,.txt,.csv,.rtf,image/*,audio/*" onChange={onFileChange} />
         </label>
 
@@ -200,7 +200,7 @@ export default function MultiFileUploadDrawer({
             <ShieldCheck size={13} />
             <span>
               {isGiur
-                ? 'I precedenti caricati restano in locale. GiulIA li può citare con source_ref esplicita distinguendoli dai documenti del caso.'
+                ? 'I documenti caricati restano in locale. Aria li può citare con source_ref esplicita distinguendoli dai materiali della scheda.'
                 : "I file originali restano sul dispositivo. Solo il testo estratto viene inviato all'AI al momento dell'analisi."}
             </span>
           </div>
@@ -225,8 +225,8 @@ export default function MultiFileUploadDrawer({
                   <div className="upload-queue-name">
                     {item.description || item.name}
                     {item.category === 'giurisprudenza'
-                      ? <span className="upload-cat-badge upload-cat-badge--giur">Precedente</span>
-                      : <span className="upload-cat-badge upload-cat-badge--doc">Fascicolo</span>
+                      ? <span className="upload-cat-badge upload-cat-badge--giur">Doc. medica</span>
+                      : <span className="upload-cat-badge upload-cat-badge--doc">Scheda</span>
                     }
                   </div>
                   <div className="upload-queue-size">

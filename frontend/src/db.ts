@@ -1,8 +1,8 @@
 // IndexedDB persistence — all case data stays on device, never on PLT servers.
 // Only the text sent to the AI API leaves the device (user's conscious choice).
 
-const DB_NAME = 'plt';
-const DB_VERSION = 2;
+const DB_NAME = 'schedapro';
+const DB_VERSION = 1;
 const LEGACY_STORE = 'cases';
 const STORE = 'cases_v2';
 

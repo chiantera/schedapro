@@ -179,10 +179,7 @@ class DefenseStrategy(BaseModel):
         default=None,
         description="Exact charge/capo identifier this strategy addresses, e.g. 'Capo A'.",
     )
-    strategy_type: Literal[
-        "alibi", "misidentification", "lack_of_intent",
-        "procedural", "constitutional", "affirmative", "negotiation"
-    ]
+    strategy_type: str = "procedural"
     priority: Literal["primary", "secondary", "fallback"]
     description: str
     strengths: list[str]
@@ -194,10 +191,7 @@ class DefenseStrategy(BaseModel):
 class ConstitutionalIssue(BaseModel):
     """A potential constitutional or procedural rights violation."""
     title: str
-    issue_type: Literal[
-        "illegal_search", "coerced_confession", "right_to_counsel",
-        "due_process", "speedy_trial", "procedural_violation", "evidence_tampering"
-    ]
+    issue_type: str = "procedural_violation"
     severity: Literal["critical", "significant", "minor"]
     description: str
     legal_basis: str
