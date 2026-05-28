@@ -1,4 +1,4 @@
-export type DraftArtifactType = 'memoria' | 'cassazione' | 'eccezione' | 'crossExam' | 'strategy' | 'witnessCrossExam';
+export type DraftArtifactType = 'memoria' | 'cassazione' | 'eccezione' | 'crossExam' | 'strategy' | 'witnessCrossExam' | 'pianoSettimana' | 'schedaMensile' | 'reportProgresso' | 'notaNutrizionale' | 'messaggioMotivazione';
 export type DraftArtifactStatus = 'draft' | 'reviewing' | 'approved' | 'archived';
 export type DraftClaimStatus = 'sourced' | 'da_verificare' | 'unsupported';
 export type DraftExportFormat = 'md' | 'txt' | 'html';
@@ -66,6 +66,11 @@ const DRAFT_LABELS: Record<DraftArtifactType, string> = {
   crossExam: 'Controesame',
   strategy: 'Analisi strategica',
   witnessCrossExam: 'Controesame testimone',
+  pianoSettimana: 'Piano settimana',
+  schedaMensile: 'Scheda mensile',
+  reportProgresso: 'Report progresso',
+  notaNutrizionale: 'Nota nutrizionale',
+  messaggioMotivazione: 'Messaggio cliente',
 };
 
 function randomId(): string {

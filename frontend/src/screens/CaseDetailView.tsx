@@ -61,7 +61,7 @@ const MultiFileUploadDrawer = React.lazy(() => import('../components/MultiFileUp
 function pct(v: number) { return `${Math.round(v * 100)}%`; }
 
 function deadlineTypeLabel(t: ProceduralDeadline['deadline_type']) {
-  return ({ hearing: 'udienza', defense_brief: 'memoria difensiva', filing: 'deposito', investigation: 'indagine difensiva', other: 'altro' })[t];
+  return ({ hearing: 'sessione PT', defense_brief: 'check-in', filing: 'gara/evento', investigation: 'valutazione', other: 'altro' })[t];
 }
 
 function elementStatusColor(s: ChargeElement['status']) {
@@ -681,7 +681,7 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
       {/* Risk banner */}
       <div className="risk-banner" style={{ borderColor: riskColor(la.risk_level) + '66', background: riskColor(la.risk_level) + '11' }}>
         <div className="risk-banner-label" style={{ color: riskColor(la.risk_level) }}>
-          {riskIcon(la.risk_level)} Rischio{' '}
+          {riskIcon(la.risk_level)} Progressione{' '}
           <EditableSelect
             value={la.risk_level}
             options={RISK_OPTIONS}
@@ -713,7 +713,7 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
 
       {/* Charges */}
       <div className="legal-section">
-        <h2><Scale size={16} /> Analisi delle accuse</h2>
+        <h2><Scale size={16} /> Obiettivi e progressi</h2>
         {la.charges.map((charge, ci) => (
           <div key={ci} className="charge-card">
             <div className="charge-card-header">
@@ -798,7 +798,7 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
 
       {/* Defense strategies */}
       <div className="legal-section">
-        <h2><ShieldCheck size={16} /> Strategie difensive</h2>
+        <h2><ShieldCheck size={16} /> Strategie di allenamento</h2>
         {la.strategies.map((s, si) => (
           <div key={si} className={`strategy-card strategy-${s.priority}`}>
             <div className="strategy-header">
@@ -868,8 +868,8 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
 
       {/* Constitutional issues */}
       <div className="legal-section">
-        <h2><ShieldAlert size={16} /> Problemi costituzionali / procedurali</h2>
-        {la.constitutional_issues.length === 0 && <p className="muted">Nessun problema costituzionale.</p>}
+        <h2><ShieldAlert size={16} /> Plateau e incongruenze</h2>
+        {la.constitutional_issues.length === 0 && <p className="muted">Nessun plateau o incongruenza rilevata.</p>}
         {la.constitutional_issues.map((issue, ii) => (
           <div key={ii} className={`issue-card issue-${issue.severity}`}>
             <div className="issue-header">
@@ -910,8 +910,8 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
 
       {/* Witness assessments */}
       <div className="legal-section">
-        <h2><Users size={16} /> Valutazione testimoni</h2>
-        {la.witness_assessments.length === 0 && <p className="muted">Nessun testimone.</p>}
+        <h2><Users size={16} /> Misurazioni e test</h2>
+        {la.witness_assessments.length === 0 && <p className="muted">Nessuna misurazione registrata.</p>}
         {la.witness_assessments.map((w, wi) => (
           <div key={wi} className={`witness-card witness-${w.role}`}>
             <div className="witness-header">
@@ -974,7 +974,7 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
                 `Preparami una sequenza di controesame per ${w.witness_name} (${w.role}, credibilità ${Math.round(w.credibility_score * 100)}%). Testimonianza chiave: "${w.key_testimony}". Vulnerabilità note: ${w.vulnerabilities.join('; ') || 'da sviluppare'}. Usa domande chiuse sì/no per massimizzare l'impatto.`
               )}
             >
-              <MessageSquare size={12} /> Prepara controesame con GiulIA
+              <MessageSquare size={12} /> Chiedi ad Aria
             </button>
           </div>
         ))}
@@ -983,46 +983,46 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
 
       {/* Evidence balance */}
       <div className="legal-section">
-        <h2><Scale size={16} /> Equilibrio probatorio</h2>
+        <h2><Scale size={16} /> Bilancio progressi</h2>
         <div className="balance-card">
           <div className="balance-bars">
             <div>
-              <span className="muted" style={{ fontSize: '0.78rem' }}>Forza accusa:{' '}
+              <span className="muted" style={{ fontSize: '0.78rem' }}>Carichi attuali:{' '}
                 <EditablePercent value={evidenceBalance.prosecution_strength} onChange={v => updateBalance({ prosecution_strength: v })} />
               </span>
-              <StrengthBar value={evidenceBalance.prosecution_strength} label="Forza accusa" color="#ef4444" />
+              <StrengthBar value={evidenceBalance.prosecution_strength} label="Carichi attuali" color="#ef4444" />
             </div>
             <div>
-              <span className="muted" style={{ fontSize: '0.78rem' }}>Forza difesa:{' '}
+              <span className="muted" style={{ fontSize: '0.78rem' }}>Recupero:{' '}
                 <EditablePercent value={evidenceBalance.defense_strength} onChange={v => updateBalance({ defense_strength: v })} />
               </span>
-              <StrengthBar value={evidenceBalance.defense_strength} label="Forza difesa" color="#22c55e" />
+              <StrengthBar value={evidenceBalance.defense_strength} label="Recupero" color="#22c55e" />
             </div>
           </div>
           <div className="balance-cols">
             <div>
-              <h4>Prove accusa</h4>
+              <h4>Punti di forza</h4>
               <EditableStringList
                 items={evidenceBalance.key_prosecution_evidence}
                 onChange={items => updateBalance({ key_prosecution_evidence: items })}
-                placeholder="Prova accusa…"
+                placeholder="Punto di forza…"
                 itemClass="risk-item"
                 addLabel="Aggiungi"
               />
             </div>
             <div>
-              <h4>Prove difesa</h4>
+              <h4>Aree di miglioramento</h4>
               <EditableStringList
                 items={evidenceBalance.key_defense_evidence}
                 onChange={items => updateBalance({ key_defense_evidence: items })}
-                placeholder="Prova difesa…"
+                placeholder="Area da migliorare…"
                 itemClass="pro-item"
                 addLabel="Aggiungi"
               />
             </div>
           </div>
           <div className="balance-gaps">
-            <h4><Search size={13} /> Lacune critiche</h4>
+            <h4><Search size={13} /> Lacune nel percorso</h4>
             <EditableStringList
               items={evidenceBalance.critical_gaps}
               onChange={items => updateBalance({ critical_gaps: items })}
@@ -1059,17 +1059,17 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
         <div className="legal-drafting-header">
           <Sparkles size={16} />
           <div>
-            <div className="legal-drafting-title">Redazione atti con AI</div>
-            <div className="legal-drafting-sub">Memorie, ricorsi, eccezioni — ragionamento giuridico reale, non template</div>
+            <div className="legal-drafting-title">Genera con Aria</div>
+            <div className="legal-drafting-sub">Piani, schede, report — generati da AI in base ai dati del cliente</div>
           </div>
         </div>
         <div className="legal-drafting-grid">
           {([
-            { key: 'memoria',    label: 'Memoria difensiva',     desc: 'Atto completo con IN FATTO, IN DIRITTO e CONCLUSIONI', icon: FileText },
-            { key: 'cassazione', label: 'Ricorso Cassazione',    desc: 'Motivi ex art. 606 c.p.p. con giurisprudenza', icon: Scale },
-            { key: 'eccezione',  label: 'Eccezione procedurale', desc: 'Nullità / inutilizzabilità / inammissibilità', icon: ShieldAlert },
-            { key: 'crossExam',  label: 'Controesame',           desc: 'Schema domande per ciascun testimone dell\'accusa', icon: Users },
-            { key: 'strategy',   label: 'Analisi strategica',    desc: 'Valutazione realistica di ogni linea difensiva', icon: Sparkles },
+            { key: 'pianoSettimana', label: 'Piano settimana',    desc: 'Piano settimanale personalizzato basato sullo storico sessioni', icon: FileText },
+            { key: 'schedaMensile',  label: 'Scheda mensile',     desc: 'Scheda allenamento mensile con esercizi, serie e recuperi', icon: Scale },
+            { key: 'reportProgresso', label: 'Report progresso',  desc: 'Report progressi con dati, plateau e raccomandazioni', icon: ShieldAlert },
+            { key: 'notaNutrizionale', label: 'Nota nutrizionale', desc: 'Indicazioni alimentari di supporto (non medico)', icon: Users },
+            { key: 'messaggioMotivazione', label: 'Messaggio cliente', desc: 'Messaggio motivazionale personalizzato per il cliente', icon: Sparkles },
           ] as const).map(({ key, label, desc, icon: Icon }) => (
             <button key={key} className="legal-drafting-card" title="Apri una nuova bozza nel workspace" onClick={() => onOpenDraft(key, label)}>
               <div className="legal-drafting-card-icon"><Icon size={18} /></div>
@@ -1079,7 +1079,7 @@ function LegalAnalysisTab({ la, onSelectSource, onOpenChat, onOpenDraft, onUpdat
           ))}
         </div>
         <p className="legal-drafting-note">
-          L'AI prepara bozze locali modificabili: l'avvocato resta in controllo e verifica fonti, norme e precedenti prima del deposito.
+          Aria prepara bozze locali modificabili: il trainer verifica e personalizza prima di consegnare al cliente. Non sono consigli medici.
         </p>
       </div>
     </section>
@@ -1284,20 +1284,20 @@ function ExportCaseDrawer({
         <div className="drawer-header">
           <div>
             <p className="eyebrow">Condivisione locale</p>
-            <h2>Esporta fascicolo</h2>
+            <h2>Esporta scheda cliente</h2>
           </div>
           <button className="ghost-button" onClick={onClose} title="Chiudi"><X size={16} /></button>
         </div>
 
         <p className="export-privacy-copy">
-          I fascicoli restano su questo dispositivo. L’esportazione crea un file .plt che puoi trasferire manualmente su un altro dispositivo o inviare a un collega.
+          Le schede restano su questo dispositivo. L'esportazione crea un file .spr che puoi trasferire su un altro dispositivo o condividere con un collega.
         </p>
 
         <div className="export-mode-grid">
           <button title="Seleziona questa modalità di esportazione" className={`export-mode-card${mode === 'protected' ? ' active' : ''}`} onClick={() => setMode('protected')}>
             <ShieldCheck size={18} />
             <strong>Proteggi con password — consigliato</strong>
-            <span>Il contenuto viene cifrato nel browser prima del download. PLT non salva il file e non conosce la password.</span>
+            <span>Il contenuto viene cifrato nel browser prima del download. SchedaPRO non salva il file e non conosce la password.</span>
           </button>
           <button title="Seleziona questa modalità di esportazione" className={`export-mode-card export-mode-card-warning${mode === 'plain' ? ' active' : ''}`} onClick={() => setMode('plain')}>
             <ShieldAlert size={18} />
@@ -1310,13 +1310,13 @@ function ExportCaseDrawer({
           <div className="export-fields">
             <label>Password <input type="password" value={password} onChange={e => setPassword(e.target.value)} /></label>
             <label>Conferma password <input type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} /></label>
-            <p className="export-note">Chi riceve il file potrà aprirlo su un altro dispositivo, ma solo con questa password. Se la perdi, PLT non può recuperarla.</p>
+            <p className="export-note">Chi riceve il file potrà aprirlo su un altro dispositivo, ma solo con questa password. Se la perdi, SchedaPRO non può recuperarla.</p>
             <p className="export-note">Consiglio: invia la password con un canale diverso dal file.</p>
           </div>
         ) : (
           <div className="export-warning-box">
             <strong>File non protetto</strong>
-            <p>Il file .plt non protetto contiene i dati del fascicolo in chiaro. Prima di inviare un .plt non protetto, usa “Anonimizza” per sostituire nomi, indirizzi, numeri di procedimento e altri dati identificativi.</p>
+            <p>Il file .spr non protetto contiene i dati del cliente in chiaro. Prima di inviare un file non protetto, usa \"Anonimizza\" per sostituire nomi e dati identificativi.</p>
             <label className="export-check-row">
               <input type="checkbox" checked={anonymized} disabled={!hasAnonymizationRules} onChange={e => setAnonymized(e.target.checked)} />
               Esporta copia anonimizzata {hasAnonymizationRules ? '' : '(aggiungi prima regole da “Anonimizza”)'}
@@ -1383,16 +1383,16 @@ function DraftingWorkspace({
     <section className="panel draft-workspace-panel">
       <div className="draft-workspace-header">
         <div>
-          <p className="eyebrow">Workspace redazione atti</p>
+          <p className="eyebrow">Piano di allenamento</p>
           <h2>{caseTitle}</h2>
-          <p className="muted">Bozze locali del fascicolo. Ogni click su una card viola crea una nuova workspace tab.</p>
+          <p className="muted">Bozze locali della scheda. Ogni click su una card genera una nuova tab modificabile.</p>
         </div>
-        <button className="ghost-button" onClick={onOpenProtectedPltExport} title="Esporta l'intero fascicolo in .plt protetto">
-          <ShieldCheck size={14} /> .plt protetto
+        <button className="ghost-button" onClick={onOpenProtectedPltExport} title="Esporta la scheda cliente in formato protetto">
+          <ShieldCheck size={14} /> .spr protetto
         </button>
       </div>
 
-      <div className="draft-tabs" role="tablist" aria-label="Bozze del fascicolo">
+      <div className="draft-tabs" role="tablist" aria-label="Bozze della scheda">
         {drafts.map((draft, idx) => (
           <button
             key={draft.id}
@@ -1425,7 +1425,7 @@ function DraftingWorkspace({
               >
                 <option value="draft">bozza</option>
                 <option value="reviewing">in revisione</option>
-                <option value="approved">approvata dall'avvocato</option>
+                <option value="approved">approvata dal trainer</option>
                 <option value="archived">archiviata</option>
               </select>
             </label>
@@ -1436,15 +1436,15 @@ function DraftingWorkspace({
             value={activeDraft.content_markdown}
             onChange={e => onUpdateDraft({ ...activeDraft, content_markdown: e.target.value })}
             rows={24}
-            placeholder="La bozza generata comparirà qui. Puoi modificarla liberamente: resta salvata nel fascicolo locale."
+            placeholder="La bozza generata comparirà qui. Puoi modificarla liberamente: resta salvata nella scheda locale."
           />
         </div>
 
         <aside className="draft-side-panel">
           <div className="draft-guardrail-card">
             <ShieldAlert size={16} />
-            <strong>Divieto precedenti inventati</strong>
-            <p>Le citazioni Cassazione-like senza fonte sono marcate <strong>DA VERIFICARE</strong>. Prima del deposito verifica sempre banca dati, norme e fonti.</p>
+            <strong>Bozza — verificare prima della consegna</strong>
+            <p>I piani generati da Aria sono bozze. Il trainer verifica dati, progressi e adeguatezza prima di consegnarli al cliente. Non sono consigli medici.</p>
           </div>
 
           <div className="draft-check-card">
@@ -1481,12 +1481,12 @@ function DraftingWorkspace({
 // ── Case detail view ──────────────────────────────────────────────────────────
 
 const tabs: Array<{ id: TabId; label: string }> = [
-  { id: 'timeline', label: 'Cronologia' },
-  { id: 'deadlines', label: 'Agenda' },
-  { id: 'facts', label: 'Persone & prove' },
-  { id: 'legal', label: 'Analisi legale' },
-  { id: 'drafts', label: 'Bozze' },
-  { id: 'questions', label: 'Da verificare' },
+  { id: 'timeline', label: 'Storico sessioni' },
+  { id: 'deadlines', label: 'Appuntamenti' },
+  { id: 'facts', label: 'Profilo & misurazioni' },
+  { id: 'legal', label: 'Analisi AI' },
+  { id: 'drafts', label: 'Piano allenamento' },
+  { id: 'questions', label: 'Note trainer' },
   { id: 'brief', label: 'Promemoria' },
 ];
 
@@ -1983,7 +1983,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
   const handleAnalyze = useCallback(async (mode: 'flash' | 'pro' = 'flash') => {
     if (!caseData) return;
     if (mode === 'pro') {
-      const ok = confirm('Avviare un Approfondimento Pro con GiulIA? Verrà eseguita un’analisi più profonda solo dopo questa conferma.');
+      const ok = confirm('Avviare un Approfondimento Pro con Aria? Verrà eseguita un\'analisi più approfondita del cliente solo dopo questa conferma.');
       if (!ok) return;
     }
     const docs = caseData.raw_documents ?? [];
@@ -2093,7 +2093,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
 
   if (!caseData) return (
     <main className="app-shell loading-shell">
-      <Loader2 className="spin" size={40} /><p>Carico fascicolo…</p>
+      <Loader2 className="spin" size={40} /><p>Carico scheda cliente…</p>
     </main>
   );
 
@@ -2114,7 +2114,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
   return (
     <main className="app-shell">
       {/* Back button */}
-      <button className="back-button" title="Torna alla lista principale dei fascicoli" onClick={onBack}><ArrowLeft size={15} /> Fascicoli</button>
+      <button className="back-button" title="Torna alla lista clienti" onClick={onBack}><ArrowLeft size={15} /> Clienti</button>
 
       {analyzing && (
         <div className="analyzing-banner"><Loader2 className="spin" size={18} /> Analisi AI in corso…</div>
@@ -2153,7 +2153,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
             <button
               className="ghost-button"
               onClick={() => setShowExportModal(true)}
-              title="Esporta fascicolo"
+              title="Esporta scheda"
             >
               <Share2 size={13} /> Esporta
             </button>
@@ -2163,7 +2163,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
           <Editable
             value={d.case_title}
             onChange={t => updateCase(c => ({ ...c, case_title: t }))}
-            placeholder="Titolo del fascicolo…"
+            placeholder="Nome del cliente…"
             readOnly={redactionActive}
           />
         </h1>
@@ -2171,7 +2171,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
           <Editable
             value={d.case_summary}
             onChange={t => updateCase(c => ({ ...c, case_summary: t }))}
-            placeholder="Sintesi del caso (tocca per scrivere)…"
+            placeholder="Obiettivo e note principali (tocca per scrivere)…"
             multiline
             readOnly={redactionActive}
           />
@@ -2211,14 +2211,14 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
               <RefreshCw size={13} /> Ri-analizza
             </button>
           )}
-          <button className="aula-trigger-btn" title="Avvia la modalità Aula per la consultazione rapida in udienza" onClick={() => setAulaModeActive(true)}>
-            <Gavel size={14} /> Aula
+          <button className="aula-trigger-btn" title="Vista rapida per consultazione durante sessione" onClick={() => setAulaModeActive(true)}>
+            <Gavel size={14} /> Vista sessione
           </button>
         </div>
         {d.pro_recommendation?.recommended && (
           <div className="pro-recommendation-card" role="status" aria-live="polite">
             <div>
-              <p className="eyebrow">Approfondimento Pro con GiulIA</p>
+              <p className="eyebrow">Approfondimento Pro con Aria</p>
               <p>{d.pro_recommendation.message}</p>
               <p className="muted">L’analisi standard resta inclusa. Pro parte solo con conferma: nessun addebito automatico.</p>
             </div>
@@ -2567,8 +2567,8 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
           : (
             <section className="panel">
               <div className="empty-state-placeholder">
-                <p className="muted" style={{ marginBottom: 12 }}>Nessuna analisi legale presente.</p>
-                <p className="muted" style={{ fontSize: '0.85rem' }}>Carica dei documenti e clicca su <strong>Analizza con AI</strong> per estrarre in automatico capi di imputazione e strategia, oppure clicca qui sotto per creare l'analisi manualmente.</p>
+                <p className="muted" style={{ marginBottom: 12 }}>Nessuna analisi AI presente.</p>
+                <p className="muted" style={{ fontSize: '0.85rem' }}>Aggiungi log di sessione o misurazioni e clicca su <strong>Analizza con AI</strong> per estrarre automaticamente progressi, plateau e raccomandazioni, oppure crea l'analisi manualmente.</p>
               </div>
               <div style={{ display: 'flex', gap: 10, marginTop: 14, flexWrap: 'wrap' }}>
                 <button title="Conferma operazione principale" className="primary-button" onClick={() => handleAnalyze('flash')} disabled={analyzing || rawDocs.length === 0}>
@@ -2612,7 +2612,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
       {/* Questions / contradictions */}
       {activeTab === 'questions' && (
         <section className="panel">
-          <h2>Domande per colloquio / udienza</h2>
+          <h2>Note del trainer</h2>
           {d.open_questions.length === 0 && <p className="muted">Nessuna domanda aperta.</p>}
           {d.open_questions.map((q, i) => (
             <article className="question-card" key={i}>
@@ -2729,7 +2729,7 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
             <button className="brief-action-btn" title="Azione rapida sul documento" onClick={exportBrief}><Copy size={14} /> Copia</button>
             <button className="brief-action-btn" title="Azione rapida sul documento" onClick={shareBrief}><Share2 size={14} /> Condividi</button>
             <button className="brief-action-btn" title="Azione rapida sul documento" onClick={handleAnonymizeBrief}><EyeOff size={14} /> Anonimizza</button>
-            <button className="brief-action-btn" title="Azione rapida sul documento" onClick={() => setAulaModeActive(true)}><Gavel size={14} /> Aula Mode</button>
+            <button className="brief-action-btn" title="Azione rapida sul documento" onClick={() => setAulaModeActive(true)}><Gavel size={14} /> Vista sessione</button>
           </div>
           <textarea
             className="editable-input editable-input-multi brief-editor"
@@ -2762,8 +2762,8 @@ function CaseDetailView({ caseId, session, onBack, onOpenChat, onCaseLoaded, onC
       {/* Raw documents (always visible — the source files in this fascicolo) */}
       <section ref={materialsRef} className="materials-panel">
         <div className="materials-header">
-          <h2>Documenti del fascicolo ({rawDocs.length})</h2>
-          <button className="upload-fab" title="Aggiungi nuovi documenti al fascicolo" onClick={() => setShowUpload(true)}>
+          <h2>Documenti del cliente ({rawDocs.length})</h2>
+          <button className="upload-fab" title="Aggiungi nuovi log, misurazioni o documenti" onClick={() => setShowUpload(true)}>
             <Plus size={16} /> Aggiungi
             {uploadQueue.length > 0 && <span className="upload-badge">{uploadQueue.length}</span>}
           </button>
