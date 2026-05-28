@@ -12,4 +12,5 @@ pydantic
 pytest
 python-multipart
 trafilatura
+python-dotenv
 uvicorn
