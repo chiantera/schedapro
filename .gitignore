@@ -1,1 +1,12 @@
-node_modules/\ndist/\n.venv/\n__pycache__/\n*.pyc\n.env\n.netlify/\nandroid/build/\nandroid/.gradle/
+node_modules/
+dist/
+.venv/
+backend/.venv/
+__pycache__/
+*.pyc
+.env
+.netlify/
+frontend/.netlify/
+frontend/android/build/
+frontend/android/.gradle/
+frontend/android/app/build/
