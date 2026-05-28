@@ -200,6 +200,95 @@ function useAuth() {
   return session;
 }
 
+function OnboardingScreen({ session, onComplete }: { session: Session; onComplete: () => void }) {
+  const [step, setStep] = useState<1 | 2>(1);
+  const [nome, setNome] = useState('');
+  const [studio, setStudio] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nome.trim()) { setError('Il nome è obbligatorio.'); return; }
+    setSaving(true);
+    setError(null);
+    const { error: err } = await supabase.from('profiles').upsert({
+      id: session.user.id,
+      full_name: nome.trim(),
+      studio: studio.trim() || null,
+    });
+    setSaving(false);
+    if (err) { setError('Errore durante il salvataggio. Riprova.'); return; }
+    onComplete();
+  };
+
+  if (step === 1) return (
+    <div className="onboarding-screen">
+      <div className="onboarding-card">
+        <div className="auth-brand auth-brand--hero" style={{ marginBottom: 20 }}>
+          <div className="auth-brand-icon"><Dumbbell size={20} /></div>
+          <div>
+            <div className="auth-brand-name">SchedaPRO</div>
+            <div className="auth-brand-sub">Coach AI per personal trainer</div>
+          </div>
+        </div>
+        <div className="onboarding-step-badge">Passo 1 di 2</div>
+        <h2 className="onboarding-title">Benvenuto nel tuo studio digitale.</h2>
+        <p className="onboarding-lede">
+          SchedaPRO legge le schede dei tuoi clienti, organizza sessioni e progressi,
+          e ti aiuta a preparare piani di allenamento in secondi.
+        </p>
+        <button className="onboarding-cta" onClick={() => setStep(2)}>
+          Inizia la configurazione <ArrowRight size={17} />
+        </button>
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="onboarding-screen">
+      <div className="onboarding-card">
+        <div className="onboarding-step-badge">Passo 2 di 2</div>
+        <h2 className="onboarding-title">Il tuo profilo trainer</h2>
+        <p className="onboarding-lede">
+          Queste informazioni appariranno nelle schede e nei piani che generi.
+        </p>
+        <form className="auth-form" onSubmit={handleSubmit} style={{ marginTop: 8 }}>
+          <div className="profile-field">
+            <label className="profile-label">Nome completo *</label>
+            <input
+              className="auth-input"
+              type="text"
+              placeholder="Mario Rossi PT"
+              value={nome}
+              onChange={e => setNome(e.target.value)}
+              autoFocus
+              required
+            />
+          </div>
+          <div className="profile-field">
+            <label className="profile-label">Studio / Palestra <span style={{ fontWeight: 400, textTransform: 'none', letterSpacing: 0 }}>(opzionale)</span></label>
+            <input
+              className="auth-input"
+              type="text"
+              placeholder="FitLab Milano"
+              value={studio}
+              onChange={e => setStudio(e.target.value)}
+            />
+          </div>
+          {error && <div className="auth-error">{error}</div>}
+          <button className="auth-submit" type="submit" disabled={saving || !nome.trim()}>
+            {saving ? 'Salvataggio…' : 'Entra in SchedaPRO'}
+          </button>
+          <button type="button" className="onboarding-skip" onClick={onComplete}>
+            Salta per ora
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function AuthScreen() {
   const [tab, setTab] = useState<'login' | 'signup'>('login');
   const [email, setEmail] = useState('');
@@ -592,6 +681,7 @@ type View = 'cases' | 'case';
 
 function App() {
   const session = useAuth();
+  const [profileReady, setProfileReady] = useState<boolean | null>(null);
   const [view, setView] = useState<View>('cases');
   const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
   const [activeCaseData, setActiveCaseData] = useState<CaseAnalysis | null>(null);
@@ -616,6 +706,13 @@ function App() {
     setFabHidden(false);
     try { sessionStorage.removeItem('plt_fab_hidden'); } catch {}
   }, []);
+
+  useEffect(() => {
+    if (!session) { setProfileReady(null); return; }
+    if (DEV_BYPASS_AUTH) { setProfileReady(true); return; }
+    supabase.from('profiles').select('full_name').eq('id', session.user.id).single()
+      .then(({ data }) => setProfileReady(!!(data?.full_name)));
+  }, [session]);
 
   useEffect(() => {
     try { localStorage.setItem('plt_chat_messages', JSON.stringify(chat.messages)); } catch {}
@@ -735,13 +832,17 @@ function App() {
     }
   }, [activeCaseData]);
 
-  if (session === undefined) return (
+  if (session === undefined || (session && profileReady === null)) return (
     <div style={{ minHeight: '100dvh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--paper)' }}>
       <Loader2 size={28} className="spin" style={{ color: 'var(--giulia-ink)' }} />
     </div>
   );
 
   if (!session) return <AuthScreen />;
+
+  if (session && profileReady === false) return (
+    <OnboardingScreen session={session} onComplete={() => setProfileReady(true)} />
+  );
 
   return (
     <>
